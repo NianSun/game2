@@ -35,13 +35,15 @@
 		var diaoxueliang = 1; //装甲脆度
 		// 分数生成
 		// var gaojidiren = 2 ; //高级敌人数量
+
+		intter = setInterval(function(){
+			autofire();
+		},1000/danliang);
 		$(window).keydown(function(e){
 			if(e.keyCode == 32 ){	
 				if(autoflag){
 					autofire();
-					intter = setInterval(function(){
-						autofire();
-					},1000/danliang);
+					intter();
 					autoflag = !autoflag;
 				}else{			
 					clearInterval(intter);			
