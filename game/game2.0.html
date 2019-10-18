@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<meta charset="utf-8">
+	<title>document</title>
+	<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js" type="text/javascript"></script>
+	<script type="text/javascript">
+	$(function(){
+		// console.log("点击");
+		var autoflag = true; //自动开过标志
+		var intter = null;   //自动开火定时器
+		var Newdiv = "";     //新生成的移动span
+		var Top = "";		//主体div的位置
+		var Left = "";
+		var Index = 0;      
+		var moveid = 0 ;    //span移动块的ID
+		var bodyheight = $(window).height() - 25; //限制主体的移动空间
+		var bodywidth = $(window).width() - 15;
+		let jiance = ''; //定时器（控制中心	）
+		var danliang = 3  //每秒钟的子弹数
+		var zhutisudu = 2 //主体速度
+		var newbg = ''; //背景
+		var zidansudu = 1.5; //子弹的速度
+		var shubiaotop = '';
+		var shubiaoleft = '';//计算鼠标的距离
+		var duimian = '';  //对面敌人
+		var suijistyle = ""; //敌人大小，涉及到速度和大小
+		var pinlv = 0; //自杀攻击频率
+		var zishasudu = 1000; // 自杀速度
+		var direnshuliang = 10 ; //敌人数量
+		var paodanshu = 2; //炮弹数  0 是一发  2是3发
+		var jihui = 0; //击毁数量
+		var diaoxueliang = 1; //装甲脆度
+		// 分数生成
+		// var gaojidiren = 2 ; //高级敌人数量
+		$(window).keydown(function(e){
+			if(e.keyCode == 32 ){	
+				if(autoflag){
+					autofire();
+					intter = setInterval(function(){
+						autofire();
+					},1000/danliang);
+					autoflag = !autoflag;
+				}else{			
+					clearInterval(intter);			
+					autoflag = !autoflag;
+				}							
+			}
+			// 上下左右移动 右移
+			var mianleft = '';
+			var miantop = '';
+			if(e.keyCode == 39  ){ 
+				if(parseInt($(".mian").css('left'))  >= bodywidth){
+					mianleft = parseInt($(".mian").css('left'))
+				}else{
+					mianleft = parseInt($(".mian").css('left')) + 10*zhutisudu
+				}
+				$(".mian").css({
+					left :mianleft
+				})
+			}
+			// 左移
+			if(e.keyCode == 37  ){ 
+				if(parseInt($(".mian").css('left')) <= 25){
+					mianleft = parseInt($(".mian").css('left'))
+				}else{
+					mianleft = parseInt($(".mian").css('left')) - 10*zhutisudu
+				}
+				$(".mian").css({
+					left :mianleft
+				})
+				// console.log(mianleft -20)
+			}
+			// 上移
+			if(e.keyCode == 38  ){ 
+				if(parseInt($(".mian").css('top')) <= 15 ){
+					miantop = parseInt($(".mian").css('top'))
+				}else{
+					miantop = parseInt($(".mian").css('top')) - 10*zhutisudu
+				}
+				
+				$(".mian").css({
+					top :miantop
+				})
+			}
+			
+			// 下移
+			if(e.keyCode == 40  ){ 
+				if(parseInt($(".mian").css('top')) >= bodyheight){
+					miantop = parseInt($(".mian").css('top'))
+				}else{
+					miantop = parseInt($(".mian").css('top')) + 10*zhutisudu
+				}
+				$(".mian").css({
+					top :miantop
+				})
+			}
+			
+		})
+		// 自动火力
+		function autofire(argument) {			
+			Top = $(".paokou").offset().top;
+			Left = $(".paokou").offset().left;
+			moveid++;
+			// 三发子弹
+			for(var i = 0; i <= paodanshu ;i++){
+				if(i==0){
+					Newdiv = $("<div id ='id"+moveid+"' style='position:fixed;top:"+Top+"px;left:"+Left+"px;' class='move-span'></div>");
+					$(".mian").append(Newdiv)
+					Newdiv.animate({
+						top:'-20px',
+					},3000/zidansudu,function(){
+						$(this).remove();
+					})
+				}
+				else if(i==1){
+					Newdiv = $("<div id ='id"+moveid+"' style='position:fixed;top:"+(Top+0)+"px;left:"+(Left-25)+"px;' class='move-span'></div>");
+					$(".mian").append(Newdiv)
+					Newdiv.animate({
+						top:'-20px',
+						left:(Left - 225)
+					},3000/zidansudu,function(){
+						$(this).remove();
+					})
+				}
+				else if(i==2){
+					Newdiv = $("<div id ='id"+moveid+"' style='position:fixed;top:"+(Top+0)+"px;left:"+(Left+25)+"px;' class='move-span'></div>");
+					$(".mian").append(Newdiv)
+					Newdiv.animate({
+						top:'-20px',
+						left:(Left + 225)
+					},3000/zidansudu,function(){
+						$(this).remove();
+					})
+				}
+			}
+				
+				// 开火后打开定时器的开关 
+		}
+		// 碰撞检测函数
+		function testpeng(obj1,obj2,tar){
+			// console.log(obj1);
+			var thistop = '';
+			var thisright = '';
+			var thisbottom = '';
+			var thisleft = '';
+			thistop = obj1[0].offsetTop;
+			thisright = obj1[0].offsetLeft + obj1[0].offsetWidth;
+			thisbottom = obj1[0].offsetTop + obj1[0].offsetHeight;
+			thisleft = obj1[0].offsetLeft;
+			// console.log(thistop +'-'+thisright+'-'+thisbottom+'-'+ thisleft);
+			var thattop = '';
+			var thatright = '';
+			var thatbottom = '';
+			var thatleft = '';
+			thattop = obj2[0].offsetTop;
+			thatright = obj2[0].offsetLeft + obj2[0].offsetWidth;
+			thatbottom = obj2[0].offsetTop + obj2[0].offsetHeight;
+			thatleft = obj2[0].offsetLeft;
+			// console.log(thattop +'-'+thatright+'-'+thatbottom+'-'+ thatleft);
+			// 子弹击中
+			if( ((thistop >= thattop && thistop <= thatbottom) || (thisbottom >= thattop && thisbottom <= thatbottom))&&((thisleft >=  thatleft && thisleft <= thatright) ||(thisright >= thatleft && thisright <= thatright ))){
+				// 被击中后停止
+					if(tar){
+						// clearInterval(jiance);
+						// 血条
+						$(".life").css({
+							width: ($(".life")[0].offsetWidth-diaoxueliang)
+						});
+						// 血条耗完重新开局
+						if($(".life")[0].offsetWidth == 0){
+							obj2[0].children[0].attributes.src.value = "timg.gif";
+							setTimeout(function(){obj2.remove()},1000);
+						}
+					}else{
+					// 判断是否已爆炸
+					if(obj2[0].children[0].attributes.src.value !== "timg.gif"){
+						obj2[0].children[0].attributes.src.value = "timg.gif";
+						jihui++;
+						$('.jihui').html(jihui);
+						$('.fenshu').html(jihui*10);
+					}
+					obj1.remove();  //子弹击中后 是否删除
+					obj2.removeClass()   //改变class  避免增加动画
+					obj2.addClass("test2");
+					obj2.stop(true);  //停止所有的动画
+					setTimeout(function(){obj2.remove()},1000);
+					}
+			}else{
+				// 子弹未击中
+			}
+		}
+		// 鼠标移动
+		$('.mainimg').mousedown(function(e){
+			var thate = e;
+			// console.log("按下");
+			 shubiaoleft = e.clientX - $('.mian')[0].offsetLeft;
+			 shubiaotop = e.clientY - $('.mian')[0].offsetTop;
+			$(window).mousemove(function(aq){
+			 		aq.preventDefault();  //阻止默认事件			
+					$('.mian').css({
+						left:(aq.clientX - shubiaoleft),
+						top:(aq.clientY - shubiaotop)
+					});			
+			})
+			$(window).mouseup(function(){
+				$(window).unbind('mousemove');
+			})
+		})
+		// 对面生成  
+		function duimianfn(){
+				// console.log(parseInt(Math.random()*bodywidth))
+			suijistyle = Math.floor(Math.random() * (50 - 25)) + 25
+			var duimianleft = parseInt(Math.random()*bodywidth);
+			var duimiantop = -(Math.floor(Math.random() * (200 - 0)) + 0);
+			var duimianwidth = parseInt(suijistyle)*2
+			var duimianheight = parseInt(suijistyle)*1.4
+			duimian = $("<div class='test' style='left:"+duimianleft+"px;top:"+duimiantop+"px;width:"+duimianwidth+"px;height:"+duimianheight+"px;' ><img src='diren.png' alt='' ></div>");
+				$("body").append(duimian);
+		}
+		
+		// 控制中心(执行碰撞检测、对面生成、目标追踪、敌人个数)
+		jiance = setInterval(function(){
+				// 击中碰撞检测
+				$('.move-span').each(function(){
+					var that = $(this);
+					$('.test').each(function(){
+						testpeng(that,$(this))
+					})
+				});
+				// 被击中检测
+					$('.test').each(function(){
+						testpeng($(this),$(".mian"),true);
+					})
+				// 敌人个数
+				if($(".test").length<=direnshuliang){
+					duimianfn();
+				}
+				// 计算袭击频率
+				pinlv = pinlv + 200;
+				if(pinlv >= zishasudu){
+					pinlv = 0;
+					// 目标追踪
+					Top = $(".paokou").offset().top;
+					Left = $(".paokou").offset().left;
+					$(".test").each(function(index){
+						// console.log(index);
+						// 高级敌人数量
+						if(index <= (Math.floor(Math.random() * (direnshuliang - 0)) + 0)/4){
+							$(this).animate({
+								left : Left-27,
+								top :  Top-5
+							},zishasudu*0.8);
+						}else{
+							$(this).animate({
+								left : (Math.floor(Math.random() * (bodywidth - 0)) + 0),
+								top :  (Math.floor(Math.random() * (bodyheight - 0)) + 0)
+							},zishasudu*1.5);
+						}						
+					})					
+				}
+			},20)
+		// clearInterval(jiance);
+		// console.log($('.mian'));
+			//对面生成 
+		// 背景渲染
+		// console.log(parseInt(Math.random()*1000))
+	})
+	</script>
+	<style type="text/css">
+	.bgdiv{background: #fff;}
+		.test{width: 50px;height: 35px;border: -1px solid #aaa;left: 300px;top:300px;position: absolute;text-align: center;display: -none}
+		.test img{min-width: 100%;max-width: 100%;height: 100%}
+		.test2 img{min-width: 100%;max-width: 100%;height: 100%}
+		.test2{width: 50px;height: 35px;border: -1px solid #aaa;left: 300px;top:300px;position: absolute;text-align: center;display: -none}
+	body{height: 100%;position: fixed;top: 0;left: 0;width: 100%;margin:0;padding: 0;border: 0;background: #000;background-image: ;background-size: 1366px 768px}
+		.mian{display: -none;width: 50px;height: 30px;position: fixed;left: calc( 50% - 50px );bottom: 0px;border:1px solid #aaa;cursor: move;}
+		.move-span{border-bottom: 9px solid #fff;border-left: 2px solid #000;border-right:2px solid #000;width: 0;height: 0;position: absolute;left: -2px;border-top: 0;top:0;}
+		.mainimg{width: 100%;height: 100%;display: -none;}
+		.paokou{position: absolute;left: 23px;top: 0;width: 1px;height: 1px;}
+		.penal{color: #fff;display: flex;width: 300px;justify-content: space-around;}
+		.penal>div{color: #fff;display: flex;;justify-content: space-around;}
+		.life-div{width: 300px;height: 20px;border-radius: 30px;border:1px solid #fff;position: fixed;bottom: 30px;left: 30px;overflow: hidden;}
+		.life{height: 100%;width: 300px;background: red;}
+	</style>
+</head>
+<body>
+<div class="mian">
+	<img class="mainimg" src="zhuti.png" alt="">
+	<div class="paokou"></div>
+</div>
+<div class="penal">
+	<div><div>分数：</div><div class="fenshu">0</div></div>
+	<div><div>摧毁数量：</div><div class="jihui">0</div></div>
+</div>
+<div class="life-div">
+	<div class="life"></div>
+</div>
+</body>
+</html>
