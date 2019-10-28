@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>测试</title>
+<script src="http://libs.baidu.com/jquery/1.9.0/jquery.js" type="text/javascript"></script>
+<script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
+<script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
+<style type="text/css">
+body{border:0;margin: 0;}
+.big-main{width: 500px;border:1px solid #000;margin: auto}
+.big-main>div{display: flex;border-bottom: 1px solid #000}
+.big-main>div:last-child{border-bottom: 0px solid #000}
+.big-main>div>div{flex-grow: 1;border-right:1px solid #000;}
+.big-main>div>div:last-child{border-right:0px solid #000;}
+</style>
+<div id="app">
+	<div v-on:click="automaker">{{ fenshu }}</div>
+	<div>{{ dengji }}</div>
+	<div class="big-main">		
+		<div class="main"></div>
+	</div>
+</div>
+<script type="text/javascript">
+// 注册VUE 
+function waibu (){
+	vu.automaker();
+}
+var vu = new Vue({
+	el:"#app",
+	data:{
+		fenshu:"分数",
+		dengji:"1",
+		Index:0,
+	},
+	// 外部调用
+	// waibu(){
+	// 	window.automaker() = this.automaker();
+	// 	console.log(22);
+	// },
+	methods:{
+		automaker:function(){
+			// 删除原来的子元素
+			$('.big-main').empty();
+			this.Index ++ ;
+			console.log("成功");
+			// 生成方块
+			// 生成颜色改变的方块位置			
+			var leftnumber = Math.floor(Math.random() * (this.Index - 0)) + 0;
+			var topnumber = Math.floor(Math.random() * (this.Index - 0)) + 0;
+			// 生成方块的颜色
+			var itemcolor = Math.floor(Math.random() * (999000 - 100111)) + 100111;
+			var itemcolorindex = itemcolor + 10
+			for(var u = 0 ;u <= this.Index ; u++){
+				if( u == topnumber ){  //找到被点击方块的一行
+					var automain = "<div class='main"+u+"'></div>";
+					$('.big-main').append(automain);
+					for( var i = 0 ;i <= this.Index ; i++  ){
+						if(i == leftnumber){  //找到被点击方块的一列
+							// 找到这个方块  绑定事件
+							var autoitem = "<div  onclick='waibu()' style='background:#"+itemcolorindex+"' ></div>";
+							$('.main'+u+'').append(autoitem);
+						}
+						else{			
+							var autoitem = "<div style='background:#"+itemcolor+"'></div>";
+							$('.main'+u+'').append(autoitem);
+						}				
+					}
+				}
+				else{
+					var automain = "<div class='main"+u+"'></div>";
+					$('.big-main').append(automain);
+					for( var i = 0 ;i <= this.Index ; i++  ){				
+						var autoitem = "<div style='background:#"+itemcolor+"'></div>";
+						$('.main'+u+'').append(autoitem);
+					}					
+				}				
+			};
+			// 改变方块的高度使其成为正方形
+			$(".big-main>div>div").css({
+				height:$(".big-main>div>div").css('width')
+			});
+		},
+	}
+})
+waibu();
+</script>
+</head>
+<body>
+</body>
+</html>
