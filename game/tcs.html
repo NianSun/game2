@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html>
+ <head>
+ <meta charset="UTF-8">
+ <title>碰撞检测</title>
+ <script src="https://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+ <style type="text/css">
+	body{margin: 0;padding: 0;height: 100%;width: 100%;position: absolute;}
+	#divB{width: 20px;height: 20px;background-color: purple;font-size: 50px;line-height: 100px;text-align: center;position: absolute;color: #fff;}
+	#divB{left: 300px;top: 300px;}
+		.big_div{position: absolute;width: calc(100% - 2px);height: calc(100% - 2px);border:1px solid red;}
+	.big_div>div{position: absolute;width: 20px;height: 20px;border:1px solid red;}
+	.big_div>div:nth-child(1){top:0px;left:80px;z-index: 90;background: #red;}
+	.big_div>div:nth-child(2){top:0px;left:60px;}
+	.big_div>div:nth-child(3){top:0px;left:40px;}
+	.big_div>div:nth-child(4){top:0px;left:20px;}
+ </style>
+ </head>
+ <body>	 
+	<div  class="big_div">
+		<div id="divA" class="div1">1</div>
+		<div class="div1">2</div>
+		<div class="div1">3</div>
+		<div class="div1">4</div>
+	</div>
+	 <div id="divB">B</div>
+ </body>
+<script type="text/javascript">
+$(function(){
+	var arr = [];
+	var obj = {};
+	var toright = 20;
+	var tobottom = 0;
+	var autoflag = 0;
+	$('.big_div>div:nth-child(1)').css({'background':'red'});
+	var divA = document.getElementById("divA");
+	var divB = document.getElementById("divB");
+	var autoMove =	function (){
+	// 判断是否碰撞
+		if (isCrash(divA,divB) == true) {
+		    divB.remove();
+		  	setTimeout(function(){	
+		   		divA.style.backgroundColor = "red";
+		   		var newdiva = '<div id="divB">B</div>';
+		   		$('.big_div').before(newdiva);
+		   		newpos($('#divB'));
+				// 小蛇长一
+				var newbody = '<div class="div1" style="display:none">'+($('.div1').length+1)+'</div>'
+				$('.big_div').append(newbody);
+					divB = document.getElementById("divB");
+		  	},200);	  	
+		} else{
+		    
+		};
+		shubiaoleft =  $('.big_div>div:nth-child(1)')[0].offsetLeft+toright;
+	    shubiaotop =  $('.big_div>div:nth-child(1)')[0].offsetTop+tobottom;
+		// 第一个位置改变	
+		// 后一个获取前一个的位置
+		for(var a = $('.big_div>div').length;a >=  2 ;a--){
+				$('.big_div>div:nth-child('+(a)+')').css({
+				'top':$('.big_div>div:nth-child('+(a-1)+')')[0].offsetTop,
+				'left':$('.big_div>div:nth-child('+(a-1)+')')[0].offsetLeft,	
+			})
+		}
+		//第一个的位置重新定
+		$('.big_div>div:nth-child(1)').css({
+			'top':(shubiaotop),
+			'left':(shubiaoleft)
+		});
+		// 最后一个方块显示
+		$('.big_div>div:last-child').css({"display":"block"})
+	}
+	var timer = '';
+	// 键盘移动
+	$(window).keydown(function(e){
+		if(e.keyCode == 32 ){	
+			if(autoflag){
+				clearInterval(timer);	
+				autoflag = !autoflag;
+			}else{				
+				timer =  setInterval(autoMove,200);	
+				autoflag = !autoflag;
+			}							
+		}
+		// 上下左右移动 右移
+		if(e.keyCode == 39  ){ 
+			toright = 20;
+			tobottom = 0;
+		}
+		// 左移
+		if(e.keyCode == 37  ){ 
+			toright = -20;
+			tobottom = 0;
+		}
+		// 上移
+		if(e.keyCode == 38  ){ 
+			toright = 0;
+			tobottom = -20;
+		}
+		
+		// 下移
+		if(e.keyCode == 40  ){ 
+			toright = 0 ;
+			tobottom = 20;
+		}
+		
+	})
+
+})
+ // 元素随机位置
+  function newpos(obj){
+	var clictWidth = document.body.clientWidth-20;
+    var clictHeight = document.body.clientHeight-20;
+    var leftnumber = Math.floor(Math.random() * (clictWidth - 0)) + 0;
+	var topnumber = Math.floor(Math.random() * (clictHeight - 0)) + 0;
+  	obj.css({
+  		left:leftnumber,
+  		top:topnumber
+  	})
+  }
+ //碰撞检测函数 
+ function isCrash (obj1,obj2) {
+   
+  var boolCrash = true;
+   
+  var left1 = obj1.offsetLeft;
+   
+  var right1 = obj1.offsetLeft + obj1.offsetWidth;
+   
+  var top1 = obj1.offsetTop;
+   
+  var bottom1 = obj1.offsetTop + obj1.offsetHeight;
+   
+  var left2 = obj2.offsetLeft;
+   
+  var right2 = obj2.offsetLeft + obj2.offsetWidth;
+   
+  var top2 = obj2.offsetTop;
+   
+  var bottom2 = obj2.offsetTop + obj2.offsetHeight;
+   
+   
+  if (right1 > left2 && left1 < right2 && bottom1 > top2 && top1 < bottom2) {
+  boolCrash = true;
+  } else{
+  boolCrash = false;
+  }
+  return boolCrash;
+ }
+</script>
+</html>
