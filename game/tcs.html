@@ -6,24 +6,24 @@
  <script src="https://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
  <style type="text/css">
 	body{margin: 0;padding: 0;height: 100%;width: 100%;position: absolute;}
-	#divB{width: 20px;height: 20px;background-color: purple;font-size: 50px;line-height: 100px;text-align: center;position: absolute;color: #fff;}
+	#divB{width: 20px;height: 20px;background-color: purple;border:1px solid purple;font-size: 50px;line-height: 20px;text-align: center;position: absolute;color: #fff;}
 	#divB{left: 300px;top: 300px;}
-		.big_div{position: absolute;width: calc(100% - 2px);height: calc(100% - 2px);border:1px solid red;}
+	.big_div{position: absolute;width: calc(100% - 2px);height: calc(100% - 2px);border:1px solid red;}
 	.big_div>div{position: absolute;width: 20px;height: 20px;border:1px solid red;}
-	.big_div>div:nth-child(1){top:0px;left:80px;z-index: 90;background: #red;}
+	.big_div>div:nth-child(1){top:0px;left:80px;z-index: 90;background: red;}
 	.big_div>div:nth-child(2){top:0px;left:60px;}
 	.big_div>div:nth-child(3){top:0px;left:40px;}
 	.big_div>div:nth-child(4){top:0px;left:20px;}
  </style>
  </head>
  <body>	 
-	<div  class="big_div">
+	<div id="big_div"  class="big_div">
 		<div id="divA" class="div1">1</div>
 		<div class="div1">2</div>
 		<div class="div1">3</div>
 		<div class="div1">4</div>
 	</div>
-	 <div id="divB">B</div>
+	 <div id="divB"></div>
  </body>
 <script type="text/javascript">
 $(function(){
@@ -32,7 +32,6 @@ $(function(){
 	var toright = 20;
 	var tobottom = 0;
 	var autoflag = 0;
-	$('.big_div>div:nth-child(1)').css({'background':'red'});
 	var divA = document.getElementById("divA");
 	var divB = document.getElementById("divB");
 	var autoMove =	function (){
@@ -40,14 +39,13 @@ $(function(){
 		if (isCrash(divA,divB) == true) {
 		    divB.remove();
 		  	setTimeout(function(){	
-		   		divA.style.backgroundColor = "red";
-		   		var newdiva = '<div id="divB">B</div>';
+		   		var newdiva = '<div id="divB"></div>';
 		   		$('.big_div').before(newdiva);
 		   		newpos($('#divB'));
 				// 小蛇长一
 				var newbody = '<div class="div1" style="display:none">'+($('.div1').length+1)+'</div>'
 				$('.big_div').append(newbody);
-					divB = document.getElementById("divB");
+				divB = document.getElementById("divB");
 		  	},200);	  	
 		} else{
 		    
@@ -62,7 +60,23 @@ $(function(){
 				'left':$('.big_div>div:nth-child('+(a-1)+')')[0].offsetLeft,	
 			})
 		}
-		//第一个的位置重新定
+		//第一个的位置重新定  并判断是否越墙
+		var scrwidth = document.body.clientWidth;
+		var scrheight = document.body.clientHeight;
+		var tarleft = $('.big_div>div:nth-child(1)')[0].offsetLeft;
+		var tartop = $('.big_div>div:nth-child(1)')[0].offsetTop;
+		if (tarleft >= scrwidth -20 ) { //超过右边屏幕宽度
+			shubiaoleft = 0;
+		}
+		else if (tarleft < 0 ){  //超过左边屏幕
+			shubiaoleft = scrwidth - 30
+		}
+		else if (tartop >= scrheight -30 ){  //超过底部屏幕
+			shubiaotop = 0;
+		}
+		else if(tartop < 0){			//超过上面的高度
+			shubiaotop = scrheight -33 ;
+		}
 		$('.big_div>div:nth-child(1)').css({
 			'top':(shubiaotop),
 			'left':(shubiaoleft)
@@ -104,15 +118,15 @@ $(function(){
 			tobottom = 20;
 		}
 		
-	})
+	});
 
 })
- // 元素随机位置
+ // 元素随机位置  20的倍数
   function newpos(obj){
-	var clictWidth = document.body.clientWidth-20;
-    var clictHeight = document.body.clientHeight-20;
-    var leftnumber = Math.floor(Math.random() * (clictWidth - 0)) + 0;
-	var topnumber = Math.floor(Math.random() * (clictHeight - 0)) + 0;
+	var clictWidth = (document.body.clientWidth-20)/20;
+    var clictHeight = (document.body.clientHeight-20)/20;
+    var leftnumber = Math.floor(Math.random() * (clictWidth - 0)) * 20;
+	var topnumber = Math.floor(Math.random() * (clictHeight - 0)) * 20;
   	obj.css({
   		left:leftnumber,
   		top:topnumber
@@ -147,5 +161,35 @@ $(function(){
   }
   return boolCrash;
  }
+</script>
+<!-- 手机端控制 -->
+<script src="https://cdn.staticfile.org/dragula/3.7.2/dragula.min.js" charset="utf-8"></script>
+<script type="text/javascript">
+	var box = document.getElementById('big_div');
+    var winWidth = window.innerWidth;
+    var winHeight = window.innerHeight;
+    var endTouchY = 0;
+    var endTouchX = 0;
+    box.addEventListener('touchstart',function(ev){
+        this.addEventListener('touchmove', function(ev){
+            ev.preventDefault();
+            var ev = ev.touches[0];
+            document.body.title = ev.pageX;
+            // box.style.top = (ev.pageY-75)+'px';
+            // box.style.left = (ev.pageX-75)+'px';
+            // endTouchX = ev.pageX;
+            // endTouchY = ev.pageY;
+        },false);
+        this.addEventListener('touchend', function(ev){
+            this.ontouchmove = null;
+            this.ontouchend = null;
+            var x = (endTouchX-75)>0?(endTouchX-75):0;
+            var y = (endTouchY-75)>0?(endTouchY-75):0;
+            x = (x>(winWidth-150))?(winWidth-150):x;
+            y = (y>(winHeight-150))?(winHeight-150):y;
+            box.style.left = x + 'px';
+            box.style.top = y + 'px';
+        },false);
+    },false);
 </script>
 </html>
