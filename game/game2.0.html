@@ -22,7 +22,7 @@
 		var danliang = 3  //每秒钟的子弹数
 		var zhutisudu = 2 //主体速度
 		var newbg = ''; //背景
-		var zidansudu = 5; //子弹的速度
+		var zidansudu = 10; //子弹的速度
 		var shubiaotop = '';
 		var shubiaoleft = '';//计算鼠标的距离
 		var duimian = '';  //对面敌人
@@ -30,25 +30,34 @@
 		var pinlv = 0; //自杀攻击频率
 		var zishasudu = 1000; // 自杀速度
 		var direnshuliang = 10 ; //敌人数量
-		var paodanshu = 2; //炮弹数  0 是一发  2是3发
+		var paodanshu = 10; //炮弹数  0 是一发  2是3发
 		var jihui = 0; //击毁数量
 		var diaoxueliang = 1; //装甲脆度
+		var deg = 0 ;  //旋转角度
+		// var isdazhao = true;
 		// 分数生成
 		// var gaojidiren = 2 ; //高级敌人数量
+		$(".dazhao").hide(2000);
 
-		intter = setInterval(function(){
+		var intter = setInterval(function(){
 			autofire();
 		},1000/danliang);
 		$(window).keydown(function(e){
 			if(e.keyCode == 32 ){	
 				if(autoflag){
 					autofire();
-					intter();
+				    intter = setInterval(function(){
+						autofire();
+					},1000/danliang);
 					autoflag = !autoflag;
 				}else{			
 					clearInterval(intter);			
 					autoflag = !autoflag;
 				}							
+			}
+			console.log(e.keyCode)
+			if(e.keyCode == 49 ){				
+				$(".dazhao").show(50);					
 			}
 			// 上下左右移动 右移
 			var mianleft = '';
@@ -108,6 +117,7 @@
 			moveid++;
 			// 三发子弹
 			for(var i = 0; i <= paodanshu ;i++){
+				//↑上
 				if(i==0){
 					Newdiv = $("<div id ='id"+moveid+"' style='position:fixed;top:"+Top+"px;left:"+Left+"px;' class='move-span'></div>");
 					$(".mian").append(Newdiv)
@@ -117,6 +127,7 @@
 						$(this).remove();
 					})
 				}
+				// ↖左上
 				else if(i==1){
 					Newdiv = $("<div id ='id"+moveid+"' style='position:fixed;top:"+(Top+0)+"px;left:"+(Left-25)+"px;' class='move-span'></div>");
 					$(".mian").append(Newdiv)
@@ -127,12 +138,68 @@
 						$(this).remove();
 					})
 				}
+				// ↗右上
 				else if(i==2){
 					Newdiv = $("<div id ='id"+moveid+"' style='position:fixed;top:"+(Top+0)+"px;left:"+(Left+25)+"px;' class='move-span'></div>");
 					$(".mian").append(Newdiv)
 					Newdiv.animate({
 						top:'-20px',
 						left:(Left + 225)
+					},3000/zidansudu,function(){
+						$(this).remove();
+					})
+				}
+				// ←左
+				else if(i==3){
+					Newdiv = $("<div id ='id"+moveid+"' style='position:fixed;top:"+(Top+25)+"px;left:"+(Left+0)+"px;' class='move-span'></div>");
+					$(".mian").append(Newdiv)
+					Newdiv.animate({
+						top:Top+25,
+						left:(-20)
+					},3000/zidansudu,function(){
+						$(this).remove();
+					})
+				}
+				// →右
+				else if(i==4){
+					Newdiv = $("<div id ='id"+moveid+"' style='position:fixed;top:"+(Top+25)+"px;left:"+(Left+50)+"px;' class='move-span'></div>");
+					$(".mian").append(Newdiv)
+					Newdiv.animate({
+						top:Top+25,
+						left:(2000)
+					},3000/zidansudu,function(){
+						$(this).remove();
+					})
+				}
+				// ↙左下
+				else if(i==5){
+					Newdiv = $("<div id ='id"+moveid+"' style='position:fixed;top:"+(Top+25)+"px;left:"+(Left-25)+"px;' class='move-span'></div>");
+					$(".mian").append(Newdiv)
+					Newdiv.animate({
+						top:2000,
+						left:(Left-450)
+					},3000/zidansudu,function(){
+						$(this).remove();
+					})
+				}
+				// ↘右下
+				else if(i==6){
+					Newdiv = $("<div id ='id"+moveid+"' style='position:fixed;top:"+(Top+25)+"px;left:"+(Left+25)+"px;' class='move-span'></div>");
+					$(".mian").append(Newdiv)
+					Newdiv.animate({
+						top:2000,
+						left:(Left+450)
+					},3000/zidansudu,function(){
+						$(this).remove();
+					})
+				}
+				// ↓下
+				else if(i==7){
+					Newdiv = $("<div id ='id"+moveid+"' style='position:fixed;top:"+(Top+25)+"px;left:"+(Left)+"px;' class='move-span'></div>");
+					$(".mian").append(Newdiv)
+					Newdiv.animate({
+						top:2000,
+						left:(Left)
 					},3000/zidansudu,function(){
 						$(this).remove();
 					})
@@ -178,17 +245,18 @@
 						}
 					}else{
 					// 判断是否已爆炸
-					if(obj2[0].children[0].attributes.src.value !== "timg.gif"){
-						obj2[0].children[0].attributes.src.value = "timg.gif";
-						jihui++;
-						$('.jihui').html(jihui);
-						$('.fenshu').html(jihui*10);
-					}
-					obj1.remove();  //子弹击中后 是否删除
-					obj2.removeClass()   //改变class  避免增加动画
-					obj2.addClass("test2");
-					obj2.stop(true);  //停止所有的动画
-					setTimeout(function(){obj2.remove()},1000);
+						if(obj2[0].children[0].attributes.src.value !== "timg.gif"){
+							obj2[0].children[0].attributes.src.value = "timg.gif";
+							jihui++;
+							$('.jihui').html(jihui);
+							$('.fenshu').html(jihui*10);
+						}
+						// obj1.remove();  //子弹击中后 是否删除
+						console.log(123);
+						obj2.removeClass()   //改变class  避免增加动画
+						obj2.addClass("test2");
+						obj2.stop(true);  //停止所有的动画
+						setTimeout(function(){obj2.remove()},1000);
 					}
 			}else{
 				// 子弹未击中
@@ -199,13 +267,21 @@
 			var thate = e;
 			// console.log("按下");
 			 shubiaoleft = e.clientX - $('.mian')[0].offsetLeft;
-			 shubiaotop = e.clientY - $('.mian')[0].offsetTop;
+			 shubiaotop = e.clientY - $('.mian')[0].offsetTop;			 
 			$(window).mousemove(function(aq){
 			 		aq.preventDefault();  //阻止默认事件			
 					$('.mian').css({
 						left:(aq.clientX - shubiaoleft),
 						top:(aq.clientY - shubiaotop)
+					});		
+					//外层大招跟着跑 
+					$('.dazhao').css({
+						left:(aq.clientX - shubiaoleft-86),
+						top:(aq.clientY - shubiaotop-100)
 					});			
+			})
+			$('.hudunimg').mousemove(function(aq){
+			 		aq.preventDefault();  //阻止默认事件					
 			})
 			$(window).mouseup(function(){
 				$(window).unbind('mousemove');
@@ -222,7 +298,6 @@
 			duimian = $("<div class='test' style='left:"+duimianleft+"px;top:"+duimiantop+"px;width:"+duimianwidth+"px;height:"+duimianheight+"px;' ><img src='diren.png' alt='' ></div>");
 				$("body").append(duimian);
 		}
-		
 		// 控制中心(执行碰撞检测、对面生成、目标追踪、敌人个数)
 		jiance = setInterval(function(){
 				// 击中碰撞检测
@@ -232,6 +307,18 @@
 						testpeng(that,$(this))
 					})
 				});
+				//检测大招伤害
+				$('.test').each(function(){
+					testpeng( $(".dazhao"), $(this));
+				})
+				// testpeng( $(".dazhao"), $('.test') ,true);
+
+				// 大招自动旋转
+				deg = deg+2;
+				$('.dazhao').css({
+					transform:"rotateZ("+deg+"deg)",
+					background: "#red"
+				})
 				// 被击中检测
 					$('.test').each(function(){
 						testpeng($(this),$(".mian"),true);
@@ -263,7 +350,7 @@
 						}						
 					})					
 				}
-			},20)
+			},2)
 		// clearInterval(jiance);
 		// console.log($('.mian'));
 			//对面生成 
@@ -279,7 +366,7 @@
 		.test2 img{min-width: 100%;max-width: 100%;height: 100%}
 		.test2{width: 50px;height: 35px;border: -1px solid #aaa;left: 300px;top:300px;position: absolute;text-align: center;display: -none}
 	body{height: 100%;position: fixed;top: 0;left: 0;width: 100%;margin:0;padding: 0;border: 0;background: #000;background-image: ;background-size: 1366px 768px}
-		.mian{display: -none;width: 50px;height: 30px;position: fixed;left: calc( 50% - 50px );bottom: 50%;border:1px solid #aaa;cursor: move;z-index: 9999999}
+		.mian{display: -none;width: 50px;height: 30px;position: fixed;left: calc( 50% - 50px );bottom: 50%;border:-1px solid #aaa;cursor: move;z-index: 9999999}
 		.move-span{border-bottom: 9px solid #fff;border-left: 2px solid #000;border-right:2px solid #000;width: 0;height: 0;position: absolute;left: -2px;border-top: 0;top:0;}
 		.mainimg{width: 100%;height: 100%;display: -none;}
 		.paokou{position: absolute;left: 23px;top: 0;width: 1px;height: 1px;}
@@ -287,12 +374,21 @@
 		.penal>div{color: #fff;display: flex;;justify-content: space-around;}
 		.life-div{width: 300px;height: 20px;border-radius: 30px;border:1px solid #fff;position: fixed;bottom: 30px;left: 30px;overflow: hidden;}
 		.life{height: 100%;width: 300px;background: red;}
+		.hudun{width: 100px;height: 60px;background: -#fff;position: relative;left: -25px;top: -60px;z-index: -20}
+		.hudun img{width: 100%;height: 100%;}
+		.dazhao{width: 200px;height: 200px;border: 10px dotted #fff;position: fixed;top: -1100px;left: 0px;z-index: -20;border-radius: 200px;}
 	</style>
 </head>
 <body>
 <div id="ziji" class="mian">
 	<img class="mainimg" src="zhuti.png" alt="">
 	<div class="paokou"></div>
+	<div class="hudun">
+		<img class="hudunimg" src="timg.png">
+	</div>
+	<div class="dazhao">
+		
+	</div>
 </div>
 <div class="penal">
 	<div><div>分数：</div><div class="fenshu">0</div></div>
