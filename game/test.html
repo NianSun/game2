@@ -10,7 +10,7 @@ body{font-size: 3em;}
 #app{display: flex;flex-wrap: wrap;}
 #app>div{width: 100%;text-align: center;}
 body{border:0;margin: 0;}
-.big-main{width: 90%;border:1px solid #000;margin: auto}
+.big-main{width: 90%;border:1px outset #000;margin: auto}
 .big-main>div{display: flex;border-bottom: 1px solid #000}
 .big-main>div:last-child{border-bottom: 0px solid #000}
 .big-main>div>div{flex-grow: 1;border-right:1px solid #000;}
@@ -28,27 +28,34 @@ body{border:0;margin: 0;}
 </div>
 <div class="tips">提示</div>
 <script type="text/javascript">
+var itemcolor = ''
 $(function(){
+	console.log(itemcolor)
 	$('.tips').click(function(){
 		var  thiscolor = $('#target').css("background-color");	
-		$('#target').css({
+		$('#target').parent().children().css({
 			"background":"#fff"
 		});
 		setTimeout(function(){			
-			$('#target').css({
-				"background":thiscolor
+			$('#target').parent().children().css({
+				"background":'#'+itemcolor
 			});
 		},100)
 		setTimeout(function(){			
-			$('#target').css({
+			$('#target').parent().children().css({
 				"background":"#fff"
 			});
-		},100)
+		},150)
+		setTimeout(function(){			
+			$('#target').parent().children().css({
+				"background":'#'+itemcolor
+			});
+		},200)
 		setTimeout(function(){			
 			$('#target').css({
 				"background":thiscolor
 			});
-		},100)
+		},250)
 	});
 });
 // 注册VUE 
@@ -88,7 +95,7 @@ var vu = new Vue({
 			var leftnumber = Math.floor(Math.random() * (this.Index - 0)) + 0;
 			var topnumber = Math.floor(Math.random() * (this.Index - 0)) + 0;
 			// 生成方块的颜色
-			var itemcolor = Math.floor(Math.random() * (999000 - 100111)) + 100111;
+			itemcolor = Math.floor(Math.random() * (999000 - 100111)) + 100111;
 			var itemcolorindex = itemcolor + this.chabie
 			for(var u = 0 ;u <= this.Index ; u++){
 				if( u == topnumber ){  //找到被点击方块的一行

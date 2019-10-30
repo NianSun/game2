@@ -19,7 +19,7 @@
 	 #divA img{width: 100%;height: 108%;margin-top: -6% ;}
 	 #divZ {background: transparent;z-index: 999990;}
 	 .big_div img{width: 100%;height: 100%;margin-top: 0% ;}
-	.big_div>div:nth-child(1){top:0px;left:80px;z-index: 999999;border-radius: 20px;}
+	.big_div>div:nth-child(1){top:0px;left:80px;z-index: 999990;border-radius: 20px;}
 	.big_div>div:nth-child(2){top:0px;left:60px;}
 	.big_div>div:nth-child(3){top:0px;left:40px;}
 	.big_div>div:nth-child(4){top:0px;left:20px;}
@@ -30,13 +30,15 @@
  <!-- <div class="fast"></div> -->
 	<div id="big_div"  class="big_div">
 		<div id="divA" class="div1"><img src="stou.png" alt=""></div>
-		<div class="div1"><img src="sbody.png" alt=""></div>
-		<div class="div1"><img src="sbody.png" alt=""></div>
+		<div class="div1"></div>
+		<div class="div1"></div>
 		<div id="divZ"  class="div1"><img src="swei.png" alt=""></div>
 	</div>
 	 <div id="divB">?</div>
  </body>
 <script type="text/javascript">
+var gusibody = "岁月匆匆到己亥， 生肖轮换猪年开。 肥头大耳猪拱福， 四蹄踏春杨柳摆。 麦苗青青盖玉被， 喜鹊喳喳贺喜来。 盛世猪年好运到， 人寿年丰家家爱。玉狗晓时，咏梅赏雪欣观景;金猪阔步，协律踏歌福拱门。新春佳节到，拜年要趁早，吉祥追你跑，好运围你绕，升职又加薪；钞票进钱包，心宽体就健，春节开怀笑！写春联剪窗花，满眼都是喜庆；挂灯笼放炮竹，来年都是鸿运。猪年即将来临，祝您在新的一年里，身体倍棒，事业更旺！多彩的焰火照亮夜空，红红的灯笼迎着春风，新年的钟声送来吉祥，春节的祝福来至天蓬：恭喜发财，过年好！新春佳节到，向你拜个年：身体倍健康，心情特别好；胃口顿顿香，天天好运交。己亥猪年要登台，我来提前把年拜，生活多姿又多彩，心情舒畅乐开怀！小猪快跑真勤快，直把财神请过来，祝你新年多财又多才！欢欢喜喜庆新年，团团圆圆幸福添；平平安安身体健，快快乐乐赛神仙！祝朋友猪年大富大贵！天狗守岁，来年平安；金猪贺岁，家业兴旺。送上祝福，字短情长，祝您幸福安康，如意吉祥！"
+var gusi = gusibody.split("");
 // 全屏
 // console.log($("#divA"))
 alert("上下左右箭头控制，w加速");
@@ -80,7 +82,7 @@ $(function(){
 				var thislength = ''			
 				for (var i =  1; i <= nowjiacheng; i++) {
 					thislength = ($('.div1').length+1)	
-					var newbody = '<div class="div1"  thisid="'+thislength+'"  style="display:none;top:-30px;z-index:'+(9999-thislength)+'"><img src="sbody.png"alt=""></div>'
+					var newbody = '<div class="div1"  thisid="'+thislength+'"  style="display:none;top:-30px;z-index:'+(9999-thislength)+'">'+gusi[thislength]+'</div>'
 					$('.big_div>div:last-child').before(newbody);
 				}			  				
 		  	},200);	  	
