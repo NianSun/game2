@@ -4,19 +4,27 @@
  <meta charset="UTF-8">
  <title>碰撞检测</title>
  <script src="https://libs.baidu.com/jquery/1.11.3/jquery.min.js"></script>
+<script src="https://cdn.staticfile.org/dragula/3.7.2/dragula.min.js" charset="utf-8"></script>	
+<script type="text/javascript">
+	var toright = 20;
+	var tobottom = 0;
+	var sudu = 10;  //蛇的速度
+</script>
  <style type="text/css">
-	body{margin: 0;padding: 0;height: 100%;width: 100%;position: absolute;}
+	body{margin: 0;padding: 0;height: 100%;width: 100%;position: absolute;background: #000;}
 	#divB{width: 20px;height: 20px;background-color: purple;border:1px solid purple;font-size: 50px;line-height: 20px;text-align: center;position: absolute;color: #fff;}
 	#divB{left: 300px;top: 300px;}
-	.big_div{position: absolute;width: calc(100% - 2px);height: calc(100% - 2px);border:1px solid red;}
+	.big_div{position: absolute;width: calc(100% - 0px);height: calc(100% - 0px);border:-1px solid red;}
 	.big_div>div{position: absolute;width: 20px;height: 20px;border:1px solid red;}
 	.big_div>div:nth-child(1){top:0px;left:80px;z-index: 90;background: red;}
 	.big_div>div:nth-child(2){top:0px;left:60px;}
 	.big_div>div:nth-child(3){top:0px;left:40px;}
 	.big_div>div:nth-child(4){top:0px;left:20px;}
+	/*.fast{position: fixed;top:10%;left: 10%;width: 30%;height:15%;border:1px solid red;}*/
  </style>
  </head>
  <body>	 
+ <!-- <div class="fast"></div> -->
 	<div id="big_div"  class="big_div">
 		<div id="divA" class="div1">1</div>
 		<div class="div1">2</div>
@@ -26,12 +34,26 @@
 	 <div id="divB"></div>
  </body>
 <script type="text/javascript">
+// 全屏
+alert("上下左右箭头控制，w加速");
+   function  fullscreen() {
+	        elem = document.body;
+	        if (elem.webkitRequestFullScreen) {
+	            elem.webkitRequestFullScreen();
+	        } else if (elem.mozRequestFullScreen) {
+	            elem.mozRequestFullScreen();
+	        } else if (elem.requestFullScreen) {
+	            elem.requestFullscreen();
+	        } else {
+	            //浏览器不支持全屏API或已被禁用  
+	            alert("不支持");
+	        }
+	    } 
+	     fullscreen() ;
 $(function(){
 	var arr = [];
 	var obj = {};
-	var toright = 20;
-	var tobottom = 0;
-	var autoflag = 0;
+	var autoflag = 1;
 	var divA = document.getElementById("divA");
 	var divB = document.getElementById("divB");
 	var autoMove =	function (){
@@ -85,6 +107,7 @@ $(function(){
 		$('.big_div>div:last-child').css({"display":"block"})
 	}
 	var timer = '';
+	timer =  setInterval(autoMove,1000/sudu);	
 	// 键盘移动
 	$(window).keydown(function(e){
 		if(e.keyCode == 32 ){	
@@ -92,9 +115,16 @@ $(function(){
 				clearInterval(timer);	
 				autoflag = !autoflag;
 			}else{				
-				timer =  setInterval(autoMove,200);	
+				timer =  setInterval(autoMove,1000/sudu);	
 				autoflag = !autoflag;
 			}							
+		}
+		// console.log(e.keyCode)
+
+		if(e.keyCode == 87  ){ 
+			sudu = 60;
+			clearInterval(timer);
+			timer =  setInterval(autoMove,1000/sudu);	
 		}
 		// 上下左右移动 右移
 		if(e.keyCode == 39  ){ 
@@ -119,6 +149,13 @@ $(function(){
 		}
 		
 	});
+	$(window).keyup(function(e){
+		if(e.keyCode == 87  ){ 
+			sudu = 10;
+			clearInterval(timer);
+			timer =  setInterval(autoMove,1000/sudu);	
+		}
+	})
 
 })
  // 元素随机位置  20的倍数
@@ -163,32 +200,58 @@ $(function(){
  }
 </script>
 <!-- 手机端控制 -->
-<script src="https://cdn.staticfile.org/dragula/3.7.2/dragula.min.js" charset="utf-8"></script>
 <script type="text/javascript">
 	var box = document.getElementById('big_div');
-    var winWidth = window.innerWidth;
-    var winHeight = window.innerHeight;
-    var endTouchY = 0;
-    var endTouchX = 0;
-    box.addEventListener('touchstart',function(ev){
+	var needtop = "";
+	var needleft = "";
+    box.addEventListener('touchstart',function(sev){  
+    		var sev = sev.touches[0];
+    		//获取触摸开始时的坐标 
+            needtop = sev.pageY;
+            needleft = sev.pageX;
+            // document.title = needleft
+            console.log(sev.pageX)
         this.addEventListener('touchmove', function(ev){
+            // console.log(ev)
             ev.preventDefault();
             var ev = ev.touches[0];
-            document.body.title = ev.pageX;
-            // box.style.top = (ev.pageY-75)+'px';
-            // box.style.left = (ev.pageX-75)+'px';
-            // endTouchX = ev.pageX;
-            // endTouchY = ev.pageY;
+            // console.log(ev.pageX)
+        	// 阻止默认事件
+        	// 移动开始时的坐标对比
+        	if(ev.pageX > (needleft + 30)){  // 右
+				toright = 20;
+				tobottom = 0;
+				// console.log("右"+needtop+"==="+tobottom);				
+				// var toright = 20;
+				// var tobottom = 0;
+        	}
+        	if(ev.pageX < (needleft - 30)){   //左
+				toright = -20;
+				tobottom = 0;
+				// console.log("左"+needtop+"==="+tobottom);	
+        	}
+        	if (ev.pageY < (needtop - 30)) {  //上
+				toright = 0;
+				tobottom = -20;
+        	}
+        	if(ev.pageY > (needtop + 30)) { 				//下
+				toright = 0 ;
+				tobottom = 20;
+				// console.log("卧槽")
+        	}
+
+            needtop = ev.pageY;
+            needleft = ev.pageX;
         },false);
         this.addEventListener('touchend', function(ev){
-            this.ontouchmove = null;
-            this.ontouchend = null;
-            var x = (endTouchX-75)>0?(endTouchX-75):0;
-            var y = (endTouchY-75)>0?(endTouchY-75):0;
-            x = (x>(winWidth-150))?(winWidth-150):x;
-            y = (y>(winHeight-150))?(winHeight-150):y;
-            box.style.left = x + 'px';
-            box.style.top = y + 'px';
+            // this.ontouchmove = null;
+            // this.ontouchend = null;
+            // var x = (endTouchX-75)>0?(endTouchX-75):0;
+            // var y = (endTouchY-75)>0?(endTouchY-75):0;
+            // x = (x>(winWidth-150))?(winWidth-150):x;
+            // y = (y>(winHeight-150))?(winHeight-150):y;
+            // box.style.left = x + 'px';
+            // box.style.top = y + 'px';
         },false);
     },false);
 </script>
