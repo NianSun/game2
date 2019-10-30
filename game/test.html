@@ -6,15 +6,16 @@
 <script src="https://cdn.staticfile.org/vue/2.2.2/vue.min.js"></script>
 <script src="https://unpkg.com/vue-router/dist/vue-router.js"></script>
 <style type="text/css">
+body{font-size: 3em;}
 #app{display: flex;flex-wrap: wrap;}
 #app>div{width: 100%;text-align: center;}
 body{border:0;margin: 0;}
-.big-main{width: 40%;border:1px solid #000;margin: auto}
+.big-main{width: 90%;border:1px solid #000;margin: auto}
 .big-main>div{display: flex;border-bottom: 1px solid #000}
 .big-main>div:last-child{border-bottom: 0px solid #000}
 .big-main>div>div{flex-grow: 1;border-right:1px solid #000;}
 .big-main>div>div:last-child{border-right:0px solid #000;}
-.tips{position: fixed;bottom: 5%;left:5%;width: 50px;height: 50px;line-height: 50px ;border:1px solid #aaa;text-align: center;}
+.tips{position: fixed;bottom: 5%;left:5%;padding: 30px 100px 30px 100px;line-height: 50px ;border:1px solid #aaa;text-align: center;border-radius: 60px}
 </style>
 <div id="app">
 	<div>等级：{{ dengji }}</div>
