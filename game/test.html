@@ -14,6 +14,7 @@ body{border:0;margin: 0;}
 .big-main>div:last-child{border-bottom: 0px solid #000}
 .big-main>div>div{flex-grow: 1;border-right:1px solid #000;}
 .big-main>div>div:last-child{border-right:0px solid #000;}
+.tips{position: fixed;bottom: 5%;left:5%;width: 50px;height: 50px;line-height: 50px ;border:1px solid #aaa;text-align: center;}
 </style>
 <div id="app">
 	<div>等级：{{ dengji }}</div>
@@ -24,7 +25,31 @@ body{border:0;margin: 0;}
 	</div> 
 	</div>
 </div>
+<div class="tips">提示</div>
 <script type="text/javascript">
+$(function(){
+	$('.tips').click(function(){
+		var  thiscolor = $('#target').css("background-color");	
+		$('#target').css({
+			"background":"#fff"
+		});
+		setTimeout(function(){			
+			$('#target').css({
+				"background":thiscolor
+			});
+		},100)
+		setTimeout(function(){			
+			$('#target').css({
+				"background":"#fff"
+			});
+		},100)
+		setTimeout(function(){			
+			$('#target').css({
+				"background":thiscolor
+			});
+		},100)
+	});
+});
 // 注册VUE 
 function waibu (){
 	vu.automaker();
@@ -71,7 +96,7 @@ var vu = new Vue({
 					for( var i = 0 ;i <= this.Index ; i++  ){
 						if(i == leftnumber){  //找到被点击方块的一列
 							// 找到这个方块  绑定事件
-							var autoitem = "<div  onclick='waibu()' style='background:#"+itemcolorindex+"' ></div>";
+							var autoitem = "<div id='target'  onclick='waibu()' style='background:#"+itemcolorindex+"' ></div>";
 							$('.main'+u+'').append(autoitem);
 						}
 						else{			
