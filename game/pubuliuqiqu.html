@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>瀑布流</title>
+	<script src="https://code.jquery.com/jquery-1.9.1.min.js"></script>
+	<script type="text/javascript">
+	$(function(){
+		var stringarr = "帝高阳之苗裔兮，朕皇考曰伯庸。"
+		var fontLength = stringarr.length;
+		var shuliang = 0;  	
+		var newTop = 0;
+		var newLeft = 0; 
+		var arr = [];
+		var ajaxData = {};	
+		// 自动生成文字
+		function  autofont(){
+			var font = ""  //文字
+			var autofontLength = Math.floor(Math.random() * (250 - 20)) + 20;
+			var start = Math.floor(Math.random() * ((fontLength -250) - 0)) + 0;
+			for(var i =0 ;i <= autofontLength; i++){
+				font = font + stringarr.charAt(start + i)
+			}
+			return font;
+		}
+		// ajax  获取数据
+		function ajaxdata(page){			
+			$.ajax({		
+				data:{
+					page : page
+				}	,
+				url : "https://api.apiopen.top/getJoke?&count=1&type=image",
+				success : function(res){
+					// console.log(res);
+					// console.log(res.result[0]);
+					ajaxData =  res.result[0]
+				},
+				fail:function(){
+					console.log("失败");
+				}
+			});
+			// console.log(ab);
+		}
+		ajaxdata();
+		// 生成div
+		function autodiv(time){
+			var bgColor = "#" + (Math.floor(Math.random() * (999999 - 100000)) + 100000);
+			var randompage = (Math.floor(Math.random() * (9999 - 1)) + 1);
+			ajaxdata(randompage);
+			if(ajaxData){
+			if(shuliang == 0){
+				newTop = 0;
+				newLeft = 0; 
+				// var  oDiv = "<div style='top:"+newTop+"px;left:"+newLeft+"px;display:none;opactiy:0.1;background:"+ bgColor +"'data-color="+bgColor+" class='item_class'>"+autofont()+"</div>";
+			}
+			else if(shuliang >= 1 && shuliang <= 3){
+				var newTop = 0;
+				var newLeft = $('.item_class')[shuliang - 1].offsetLeft + $('.item_class')[shuliang - 1].offsetWidth	
+				// var  oDiv = "<div style='top:"+newTop+"px;left:"+newLeft+"px;display:none;opactiy:0.1;background:"+ bgColor +"'data-color="+bgColor+" class='item_class'>"+autofont()+"</div>";
+			}
+			else if(shuliang == 4){
+				// 首先获取前四个里面最短的				
+				for(var  x= 1 ; x  <=   4 ; x ++ ){					
+					var obj = {};
+					obj.index = shuliang - x ;
+					obj.top =  $('.item_class')[shuliang - x].offsetHeight + $('.item_class')[shuliang - x].offsetTop;
+					obj.left =  $('.item_class')[shuliang - x].offsetLeft -10
+					arr.push ( obj );
+				}
+					arr.sort(compare('top'))
+					var newTop = $('.item_class')[arr[0].index ].offsetTop + $('.item_class')[arr[0].index ].offsetHeight;
+					var newLeft = $('.item_class')[arr[0].index].offsetLeft -10 ;
+			}
+			else if(shuliang >= 5){
+				arr[0].top = arr[0].top + $('.box_class>div:last-child')[0].offsetHeight + 10;
+				arr.sort(compare('top'))
+				newTop = arr[0].top;
+				newLeft = arr[0].left;
+			}
+			var  oDivItem = '<div class="header"><div><img src="'+ ajaxData.header +'" alt=""></div><div>'+ajaxData.name+'</div><div>'+ajaxData.passtime+'</div></div><div class="content">'+ajaxData.text+'</div><div class="imgcontent"><img src="'+ajaxData.images+'" alt=""></div><div class="bottomcontent"><div><img src="'+ajaxData.top_comments_header+'" alt=""></div><div>'+ajaxData.top_comments_name+'：</div><div>'+ajaxData.top_comments_content+'</div></div>'
+			var  oDiv = "<div style='top:"+newTop+"px;left:"+newLeft+"px;background:"+ bgColor +"'data-color="+bgColor+" class='item_class'>"+oDivItem+"</div>";
+			$('.box_class').append(oDiv);
+				$('.box_class>div:last-child').css({"display":"block"})
+				var tempheight  =  $('.box_class>div:last-child')[0].offsetHeight - 50
+				$('.box_class>div:last-child').css({"height":"0"})
+				$('.box_class>div:last-child').animate({
+					"height" : tempheight
+				},time,function(){
+					//console.log(123)  //回调函数
+				})
+			$('.box_class>div:last-child').show(time)
+			shuliang = shuliang + 1;	
+			}
+			// console.log(bgColor);
+
+		}
+
+		// for(var a = 0 ;a <= 44 ;a++){
+		// 	autodiv(0);
+		// }
+		//   延迟加载
+		// setInterval(function(){
+		// 	autodiv(300);
+		// },400);
+		$('.adddiv').click(function(){
+			autodiv(0);
+		});
+
+		// 排序
+		function compare(top){
+		    return function(a,b){
+		        var value1 = a[top];
+		        var value2 = b[top];
+		        return value1 - value2;
+		    }
+		};
+		$(window).scroll(function(){
+			// console.log($(window).scrollTop());
+			if ($(window).scrollTop() + $(window).height() >= $(document).height() -20 ) {
+            	autodiv(0);
+        	}
+		})
+
+		// 变色
+		var oldColor = "";
+		var newColor = "";
+		$('body').on("mouseover",".item_class",function(){
+			 oldColor = $(this)[0].dataset.color;
+			 newColor = "#" + ( parseInt( oldColor.substring(1,7) ) - 20 );
+			// console.log(oldColor);
+			// console.log(newColor);
+			$(this).css("background",newColor)
+		})
+		$('body').on("mouseleave",".item_class",function(){
+			$(this).css("background",oldColor)
+		})
+	})
+	</script>
+	<style type="text/css">
+	body{padding: 0;margin: 0}
+		.box_class{width: 100%;position: absolute;}
+		.item_class{width: calc( 25% - 60px );border:-1px solid #aaa;box-shadow: 4px 4px 4px 4px #ccc;border-radius: 10px;padding: 20px;margin: 10px;position: absolute;cursor: pointer;background: -#fff;color: #ccc;display:none;opactiy:0.1;}
+		.item_class:hover{border: -1px solid #aaa;z-index: 999;color: #fff}
+		.adddiv{position: fixed;top: 20px;left: 20px;z-index: 9999;cursor: pointer;}
+		.header img{width: 30px;height: 30px}
+		.header{display: flex;font-size: 10px;align-items: center;}
+		.header>div:nth-child(1){width: 15%}
+		.header>div:nth-child(2){width: 35%}
+		.header>div:nth-child(3){width: 50%;text-align: right;color: green}
+		.imgcontent{text-align: center;}
+		.imgcontent img{max-width:100% ;margin-left: %;max-height: 300px;height: 200px}
+		.content{margin: 10px 0 10px 0}
+		.bottomcontent{display: flex;justify-content: space-between;margin: 10px 0 0px 0}
+		.bottomcontent img{width: 20px;height: 20px;border-radius: 20px}
+	</style>
+</head>
+<body>
+<div class="adddiv">添加</div>
+	<div class="box_class"></div>
+</body>
+</html>
