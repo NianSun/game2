@@ -87,20 +87,20 @@
 				},time,function(){
 					//console.log(123)  //回调函数
 				})
-			$('.box_class>div:last-child').show(time)
+			// $('.box_class>div:last-child').show(time)
 			shuliang = shuliang + 1;	
 			}
 			// console.log(bgColor);
 
 		}
 
-		for(var a = 0 ;a <= 14 ;a++){
-			autodiv(0);
-		}
+		// for(var a = 0 ;a <= 14 ;a++){
+		// 	autodiv(0);
+		// }
 		//   延迟加载
 		// setInterval(function(){
-		// 	autodiv(300);
-		// },400);
+		// 	autodiv(600);
+		// },800);
 		$('.adddiv').click(function(){
 			autodiv(0);
 		});
@@ -128,10 +128,16 @@
 			 newColor = "#" + ( parseInt( oldColor.substring(1,7) ) - 20 );
 			// console.log(oldColor);
 			// console.log(newColor);
-			$(this).css("background",newColor)
+			$(this).css({
+				"background":newColor,
+				"z-index":999
+			})
 		})
 		$('body').on("mouseleave",".item_class",function(){
-			$(this).css("background",oldColor)
+			$(this).css({
+				"background":oldColor,
+				"z-index":1
+			})
 		})
 	})
 	</script>
@@ -139,7 +145,7 @@
 	body{padding: 0;margin: 0}
 		.box_class{width: 100%;position: absolute;}
 		.item_class{width: calc( 25% - 60px );border:-1px solid #aaa;box-shadow: 4px 4px 4px 4px #ccc;border-radius: 10px;padding: 20px;margin: 10px;position: absolute;cursor: pointer;background: -#fff;color: #ccc;display:none;opactiy:0.1;}
-		.item_class:hover{border: -1px solid #aaa;z-index: 999;color: #fff}
+		/*.item_class:hover{border: -1px solid #aaa;z-index: 999;color: #fff}*/
 		.adddiv{position: fixed;top: 20px;left: 20px;z-index: 9999;cursor: pointer;}
 		.header img{width: 30px;height: 30px}
 		.header{display: flex;font-size: 10px;align-items: center;}
