@@ -35,7 +35,7 @@
 					ajaxData =  res.result[0]
 				},
 				fail:function(){
-					console.log("失败");
+					console.log("ajax获取数据失败");
 				}
 			});
 			// console.log(ab);
@@ -45,50 +45,75 @@
 		function autodiv(time){
 			var bgColor = "#" + (Math.floor(Math.random() * (999999 - 100000)) + 100000);
 			var randompage = (Math.floor(Math.random() * (9999 - 1)) + 1);
+			// console.log(ajaxData.toString().length)
 			ajaxdata(randompage);
-			if(ajaxData){
-			if(shuliang == 0){
-				newTop = 0;
-				newLeft = 0; 
-				// var  oDiv = "<div style='top:"+newTop+"px;left:"+newLeft+"px;display:none;opactiy:0.1;background:"+ bgColor +"'data-color="+bgColor+" class='item_class'>"+autofont()+"</div>";
-			}
-			else if(shuliang >= 1 && shuliang <= 3){
-				var newTop = 0;
-				var newLeft = $('.item_class')[shuliang - 1].offsetLeft + $('.item_class')[shuliang - 1].offsetWidth	
-				// var  oDiv = "<div style='top:"+newTop+"px;left:"+newLeft+"px;display:none;opactiy:0.1;background:"+ bgColor +"'data-color="+bgColor+" class='item_class'>"+autofont()+"</div>";
-			}
-			else if(shuliang == 4){
-				// 首先获取前四个里面最短的				
-				for(var  x= 1 ; x  <=   4 ; x ++ ){					
-					var obj = {};
-					obj.index = shuliang - x ;
-					obj.top =  $('.item_class')[shuliang - x].offsetHeight + $('.item_class')[shuliang - x].offsetTop;
-					obj.left =  $('.item_class')[shuliang - x].offsetLeft -10
-					arr.push ( obj );
+			// console.log(ajaxData)
+
+			if(ajaxData.type == "image"){
+				if(shuliang == 0){
+					newTop = 0;
+					newLeft = 0; 
+					// var  oDiv = "<div style='top:"+newTop+"px;left:"+newLeft+"px;display:none;opactiy:0.1;background:"+ bgColor +"'data-color="+bgColor+" class='item_class'>"+autofont()+"</div>";
 				}
+				else if(shuliang >= 1 && shuliang <= 3){
+					var newTop = 0;
+					var newLeft = $('.item_class')[shuliang - 1].offsetLeft + $('.item_class')[shuliang - 1].offsetWidth	
+					// var  oDiv = "<div style='top:"+newTop+"px;left:"+newLeft+"px;display:none;opactiy:0.1;background:"+ bgColor +"'data-color="+bgColor+" class='item_class'>"+autofont()+"</div>";
+				}
+				else if(shuliang == 4){
+					// 首先获取前四个里面最短的				
+					for(var  x= 1 ; x  <=   4 ; x ++ ){					
+						var obj = {};
+						obj.index = shuliang - x ;
+						obj.top =  $('.item_class')[shuliang - x].offsetHeight + $('.item_class')[shuliang - x].offsetTop;
+						obj.left =  $('.item_class')[shuliang - x].offsetLeft -10
+						arr.push ( obj );
+					}
+						arr.sort(compare('top'))
+						var newTop = $('.item_class')[arr[0].index ].offsetTop + $('.item_class')[arr[0].index ].offsetHeight;
+						var newLeft = $('.item_class')[arr[0].index].offsetLeft -10 ;
+				}
+				else if(shuliang >= 5){
+					arr[0].top = arr[0].top + $('.box_class>div:last-child')[0].offsetHeight + 10;
 					arr.sort(compare('top'))
-					var newTop = $('.item_class')[arr[0].index ].offsetTop + $('.item_class')[arr[0].index ].offsetHeight;
-					var newLeft = $('.item_class')[arr[0].index].offsetLeft -10 ;
+					newTop = arr[0].top;
+					newLeft = arr[0].left;
+				}
+				// 渲染数据
+				var  oDivItem = '<div class="header"><div><img src="'+ ajaxData.header +'" alt=""></div><div>'+ajaxData.name+'</div><div>'+ajaxData.passtime+'</div></div><div class="content">'+ajaxData.text+'</div><div class="imgcontent"><img class="imgclass" src="'+ajaxData.images+'" alt=""></div><div class="bottomcontent"><div><img src="'+ajaxData.top_comments_header+'" alt=""></div><div>'+ajaxData.top_comments_name+'：</div><div>'+ajaxData.top_comments_content+'</div></div>'
+				// 插入到盒子里
+				var  oDiv = "<div style='top:"+newTop+"px;left:"+newLeft+"px;background:"+ bgColor +"'data-color="+bgColor+" class='item_class'>"+oDivItem+"</div>";
+
+					var myDate = new Date();
+					console.log("渲染完成"+myDate.getSeconds()+":"+myDate.getMilliseconds());
+					setTimeout(function(){
+			  			$('.big_model').hide();
+					},2000);
+			  		$('.big_model').hide();
+				$('.box_class').append(oDiv);
+					$('.box_class>div:last-child').css({"display":"block"})
+					var tempheight  =  $('.box_class>div:last-child')[0].offsetHeight - 50
+					$('.box_class>div:last-child').css({"height":"0"})
+					$('.box_class>div:last-child').animate({
+						"height" : tempheight
+					},time,function(){
+						//console.log(123)  //回调函数
+					})
+				// $('.box_class>div:last-child').show(time)
+					shuliang = shuliang + 1;	
+					ajaxData = {statu:0}
+					for(var key in ajaxData){
+						delete ajaxData[key];
+					}
+					// console.log("....")
+					// console.log(ajaxData)
+					// console.log("....")
 			}
-			else if(shuliang >= 5){
-				arr[0].top = arr[0].top + $('.box_class>div:last-child')[0].offsetHeight + 10;
-				arr.sort(compare('top'))
-				newTop = arr[0].top;
-				newLeft = arr[0].left;
-			}
-			var  oDivItem = '<div class="header"><div><img src="'+ ajaxData.header +'" alt=""></div><div>'+ajaxData.name+'</div><div>'+ajaxData.passtime+'</div></div><div class="content">'+ajaxData.text+'</div><div class="imgcontent"><img src="'+ajaxData.images+'" alt=""></div><div class="bottomcontent"><div><img src="'+ajaxData.top_comments_header+'" alt=""></div><div>'+ajaxData.top_comments_name+'：</div><div>'+ajaxData.top_comments_content+'</div></div>'
-			var  oDiv = "<div style='top:"+newTop+"px;left:"+newLeft+"px;background:"+ bgColor +"'data-color="+bgColor+" class='item_class'>"+oDivItem+"</div>";
-			$('.box_class').append(oDiv);
-				$('.box_class>div:last-child').css({"display":"block"})
-				var tempheight  =  $('.box_class>div:last-child')[0].offsetHeight - 50
-				$('.box_class>div:last-child').css({"height":"0"})
-				$('.box_class>div:last-child').animate({
-					"height" : tempheight
-				},time,function(){
-					//console.log(123)  //回调函数
-				})
-			// $('.box_class>div:last-child').show(time)
-			shuliang = shuliang + 1;	
+			else{
+				console.log("失败");
+					setTimeout(function(){
+			  			$('.big_model').hide();
+					},2000,function(){alert("失败");});
 			}
 			// console.log(bgColor);
 
@@ -102,7 +127,12 @@
 		// 	autodiv(600);
 		// },800);
 		$('.adddiv').click(function(){
-			autodiv(0);
+		var myDate = new Date();
+			myDate.getSeconds();     //获取当前秒数(0-59)
+			myDate.getMilliseconds();    //获取当前毫秒数(0-999)
+			console.log("渲染开始"+myDate.getSeconds()+":"+myDate.getMilliseconds());
+			$('.big_model').show();
+			autodiv(200);
 		});
 
 		// 排序
@@ -116,6 +146,7 @@
 		$(window).scroll(function(){
 			// console.log($(window).scrollTop());
 			if ($(window).scrollTop() + $(window).height() >= $(document).height() -20 ) {
+				$('.big_model').show();
             	autodiv(0);
         	}
 		})
@@ -139,6 +170,14 @@
 				"z-index":1
 			})
 		})
+
+		// setInterval(function(){
+		// 	if ($('.imgclass:last')[0].offsetHeight  ){
+		// 		console.log("加载完成"+$('.imgclass:last')[0].offsetHeight)
+		// 	}else{
+		// 		console.log("加载中")
+		// 	}
+		// },200);
 	})
 	</script>
 	<style type="text/css">
@@ -157,9 +196,19 @@
 		.content{margin: 10px 0 10px 0}
 		.bottomcontent{display: flex;justify-content: space-between;margin: 10px 0 0px 0}
 		.bottomcontent img{width: 20px;height: 20px;border-radius: 20px}
+		.big_model{position: fixed;width: 100%;height: 100%;border:1px solid red;z-index:999999;display: none}
+		.model{width: 100%;height: 100%;background: #000;opacity: 0.5}
+		.big_model img{width: 200px;position: fixed;left: calc(50% - 100px);top: calc(50% - 50px)}
 	</style>
 </head>
 <body>
+<!-- 遮罩 -->
+<div class="big_model">
+	<div class="model"></div>
+	<div>
+		<img src="loading.gif" alt="">
+	</div>
+</div>
 <div class="adddiv">添加</div>
 	<div class="box_class"></div>
 </body>
