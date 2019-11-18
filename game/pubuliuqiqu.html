@@ -43,7 +43,9 @@
 		ajaxdata();
 		// 生成div
 		function autodiv(time){
-			var bgColor = "#" + (Math.floor(Math.random() * (999999 - 100000)) + 100000);
+			// 自动生成背景颜色
+			// var bgColor = "#" + (Math.floor(Math.random() * (999999 - 100000)) + 100000);
+			var bgColor = "#fff"
 			var randompage = (Math.floor(Math.random() * (9999 - 1)) + 1);
 			// console.log(ajaxData.toString().length)
 			ajaxdata(randompage);
@@ -87,9 +89,9 @@
 					var myDate = new Date();
 					console.log("渲染完成"+myDate.getSeconds()+":"+myDate.getMilliseconds());
 					setTimeout(function(){
-			  			$('.big_model').hide();
+			  			// $('.big_model').hide();
 					},2000);
-			  		$('.big_model').hide();
+			  		// $('.big_model').hide();
 				$('.box_class').append(oDiv);
 					$('.box_class>div:last-child').css({"display":"block"})
 					var tempheight  =  $('.box_class>div:last-child')[0].offsetHeight - 50
@@ -112,7 +114,7 @@
 			else{
 				console.log("失败");
 					setTimeout(function(){
-			  			$('.big_model').hide();
+			  			// $('.big_model').hide();
 					},2000,function(){alert("失败");});
 			}
 			// console.log(bgColor);
@@ -131,7 +133,7 @@
 			myDate.getSeconds();     //获取当前秒数(0-59)
 			myDate.getMilliseconds();    //获取当前毫秒数(0-999)
 			console.log("渲染开始"+myDate.getSeconds()+":"+myDate.getMilliseconds());
-			$('.big_model').show();
+			// $('.big_model').show();
 			autodiv(200);
 		});
 
@@ -146,7 +148,7 @@
 		$(window).scroll(function(){
 			// console.log($(window).scrollTop());
 			if ($(window).scrollTop() + $(window).height() >= $(document).height() -20 ) {
-				$('.big_model').show();
+				// $('.big_model').show();
             	autodiv(0);
         	}
 		})
@@ -170,6 +172,18 @@
 				"z-index":1
 			})
 		})
+		// 点击图片跳转
+		$('body').on("click",".imgclass",function(){
+			console.log($(this).attr("src"));
+			// 打开新页面
+			// window.open("imglook.html?src="+$(this).attr("src"));
+			$('.big_model').show();
+			$('iframe').attr("src",$(this).attr("src"))
+		})
+		// 点击隐藏model
+		$('.model').click(function(){
+			$('.big_model').hide();
+		});
 
 		// setInterval(function(){
 		// 	if ($('.imgclass:last')[0].offsetHeight  ){
@@ -183,7 +197,7 @@
 	<style type="text/css">
 	body{padding: 0;margin: 0}
 		.box_class{width: 100%;position: absolute;}
-		.item_class{width: calc( 25% - 60px );border:-1px solid #aaa;box-shadow: 4px 4px 4px 4px #ccc;border-radius: 10px;padding: 20px;margin: 10px;position: absolute;cursor: pointer;background: -#fff;color: #ccc;display:none;opactiy:0.1;}
+		.item_class{width: calc( 25% - 60px );border:-1px solid #aaa;box-shadow: 4px 4px 4px 4px #ccc;border-radius: 10px;padding: 20px;margin: 10px;position: absolute;cursor: pointer;background: -#fff;color: #AAA;display:none;opactiy:0.1;}
 		/*.item_class:hover{border: -1px solid #aaa;z-index: 999;color: #fff}*/
 		.adddiv{position: fixed;top: 20px;left: 20px;z-index: 9999;cursor: pointer;}
 		.header img{width: 30px;height: 30px}
@@ -196,18 +210,23 @@
 		.content{margin: 10px 0 10px 0}
 		.bottomcontent{display: flex;justify-content: space-between;margin: 10px 0 0px 0}
 		.bottomcontent img{width: 20px;height: 20px;border-radius: 20px}
-		.big_model{position: fixed;width: 100%;height: 100%;border:1px solid red;z-index:999999;display: none}
+		.big_model{position: fixed;width: 100%;height: 100%;border:-1px solid red;z-index:999999;display: none}
 		.model{width: 100%;height: 100%;background: #000;opacity: 0.5}
-		.big_model img{width: 200px;position: fixed;left: calc(50% - 100px);top: calc(50% - 50px)}
+		 iframe{width: 600px;position: fixed;height: 100%;left: calc(50% - 300px);top: 0;position: absolute;}
+		 iframe img{width: 100%}
+		.img_div{overflow-y: auto;}
 	</style>
 </head>
 <body>
 <!-- 遮罩 -->
 <div class="big_model">
 	<div class="model"></div>
-	<div>
-		<img src="loading.gif" alt="">
-	</div>
+	<iframe src="">
+
+	</iframe> 
+	<!-- class="img_div">
+		<img class="bigImg" src="" alt="">
+	</div> -->
 </div>
 <div class="adddiv">添加</div>
 	<div class="box_class"></div>
